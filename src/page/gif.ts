@@ -71,6 +71,7 @@ function composeFrames(decodedFrames: GifFrame[], width: number, height: number)
 
   for (let index = 0; index < decodedFrames.length; index += 1) {
     const frame = decodedFrames[index];
+    // Snapshot is required for disposal mode 3 ("restore to previous").
     const snapshotBefore = workCtx.getImageData(0, 0, width, height);
     const fw = frame.dims.width;
     const fh = frame.dims.height;
@@ -88,6 +89,7 @@ function composeFrames(decodedFrames: GifFrame[], width: number, height: number)
     }
 
     try {
+      // Rebuild patch data in-page to avoid Firefox security checks on foreign ImageData buffers.
       const patchImage = workCtx.createImageData(fw, fh);
       patchImage.data.set(normalized);
       workCtx.putImageData(patchImage, frame.dims.left, frame.dims.top);
@@ -101,8 +103,10 @@ function composeFrames(decodedFrames: GifFrame[], width: number, height: number)
     output.push(workCtx.getImageData(0, 0, width, height));
 
     if (frame.disposalType === 2) {
+      // Disposal 2: clear the frame's drawn region before the next frame.
       workCtx.clearRect(frame.dims.left, frame.dims.top, frame.dims.width, frame.dims.height);
     } else if (frame.disposalType === 3) {
+      // Disposal 3: revert to pixels from before this frame was drawn.
       workCtx.putImageData(snapshotBefore, 0, 0);
     }
   }
@@ -117,6 +121,7 @@ function normalizeFrameDelays(decoded: GifFrame[]): number[] {
     if (delayMs <= 0) {
       delayMs = 100;
     }
+    // Clamp malformed delay metadata so playback never appears frozen.
     return Math.min(Math.max(delayMs, 20), 1000);
   });
 }

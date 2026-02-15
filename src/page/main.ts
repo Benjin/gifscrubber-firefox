@@ -22,6 +22,7 @@ export async function runGifScrubber(): Promise<void> {
 
     stage = "fetching gif bytes";
     const gifBytes = await fetchGifBytes(gifUrl);
+    // Guard parsing with a cheap signature check so server-side redirects/HTML errors are explicit.
     if (!startsWithGifSignature(gifBytes)) {
       throw new Error(
         `Response is not GIF data (missing GIF87a/GIF89a header). First bytes: ${firstBytesHex(gifBytes)}`
@@ -38,6 +39,7 @@ export async function runGifScrubber(): Promise<void> {
     const controls = createControls(decoded.frames.length);
 
     if (policy.warningText) {
+      // Reduced mode warning is shown in-overlay rather than failing hard for large GIFs.
       controls.warning.style.display = "block";
       controls.warning.textContent = policy.warningText;
     }

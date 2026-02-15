@@ -3,6 +3,7 @@ import { t } from "./i18n";
 import type { Controls, LoopMode } from "./types";
 
 export function createControls(totalFrames: number): Controls {
+  // Single overlay root that fades until hovered to stay out of the way while viewing.
   const root = document.createElement("div");
   root.id = "gif-scrubber-overlay";
   root.style.cssText = [

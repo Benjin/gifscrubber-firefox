@@ -47,6 +47,7 @@ export class GifPlayer {
     this.bindKeyboard();
     this.renderCurrentFrame();
     this.syncUi();
+    // Default behavior: begin playback immediately on load.
     this.play();
   }
 
@@ -79,6 +80,7 @@ export class GifPlayer {
     this.controls.slider.addEventListener("input", () => {
       const targetFrame = Number(this.controls.slider.value);
       if (this.state.reducedMode) {
+        // In reduced mode, defer expensive redraw until the drag is committed.
         this.state.currentFrame = targetFrame;
         this.sliderDragPending = true;
         this.syncUi();
@@ -207,6 +209,7 @@ export class GifPlayer {
     if (this.state.reducedMode) {
       delay = Math.max(delay, 40);
     }
+    // Higher playbackRate means shorter frame delay.
     const scaled = delay / this.state.playbackRate;
     return Math.max(5, scaled);
   }
