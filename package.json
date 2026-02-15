@@ -1,6 +1,6 @@
 {
   "name": "gif-scrubber",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": true,
   "description": "Firefox extension to play, pause, scrub, and frame-step standalone GIF tabs.",
   "type": "module",

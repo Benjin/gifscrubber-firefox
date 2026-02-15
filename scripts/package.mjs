@@ -4,7 +4,8 @@ import { zipSync } from "fflate";
 
 const distDir = resolve("dist");
 const outDir = resolve("web-ext-artifacts");
-const zipPath = resolve(outDir, "gif-scrubber-0.1.0.zip");
+const distManifestPath = resolve(distDir, "manifest.json");
+const srcManifestPath = resolve("src", "manifest.json");
 
 async function collectFiles(dir) {
   const out = [];
@@ -20,6 +21,18 @@ async function collectFiles(dir) {
   return out;
 }
 
+async function readManifestVersion() {
+  const manifestPath = (await stat(distManifestPath).catch(() => null))?.isFile()
+    ? distManifestPath
+    : srcManifestPath;
+  const manifestRaw = await readFile(manifestPath, "utf8");
+  const manifest = JSON.parse(manifestRaw);
+  if (!manifest.version || typeof manifest.version !== "string") {
+    throw new Error(`Manifest at ${manifestPath} does not contain a valid string version`);
+  }
+  return manifest.version;
+}
+
 const distStats = await stat(distDir).catch(() => null);
 if (!distStats?.isDirectory()) {
   throw new Error("dist directory not found. Run 'npm run build' first.");
@@ -27,6 +40,10 @@ if (!distStats?.isDirectory()) {
 
 await rm(outDir, { recursive: true, force: true });
 await mkdir(outDir, { recursive: true });
+
+const version = await readManifestVersion();
+const zipName = `gif-scrubber-${version}.zip`;
+const zipPath = resolve(outDir, zipName);
 
 const files = await collectFiles(distDir);
 const zipInput = {};
@@ -40,4 +57,4 @@ for (const fullPath of files) {
 const zipped = zipSync(zipInput, { level: 9 });
 await writeFile(zipPath, zipped);
 
-console.log("Packaged: web-ext-artifacts/gif-scrubber-0.1.0.zip");
+console.log(`Packaged: web-ext-artifacts/${zipName}`);
