@@ -1,0 +1,47 @@
+{
+  "manifest_version": 3,
+  "name": "GIF Scrubber",
+  "version": "0.1.0",
+  "author": "Benjin Dubishar",
+  "description": "Play, pause, scrub, and frame-step through GIFs in Firefox",
+  "homepage_url": "https://github.com/Benjin/FirefoxGifScrub",
+  "icons": {
+    "48": "icons/icon.svg",
+    "96": "icons/icon.svg"
+  },
+  "host_permissions": [
+    "http://*/*",
+    "https://*/*",
+    "file:///*"
+  ],
+  "content_scripts": [
+    {
+      "matches": [
+        "<all_urls>",
+        "file:///*"
+      ],
+      "js": [
+        "content.js"
+      ],
+      "run_at": "document_idle",
+      "all_frames": false
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "page.js"
+      ],
+      "matches": [
+        "<all_urls>",
+        "file:///*"
+      ]
+    }
+  ],
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "gif-scrubber@example.local",
+      "strict_min_version": "128.0"
+    }
+  }
+}
