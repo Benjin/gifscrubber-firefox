@@ -23,6 +23,11 @@ Firefox extension that enables play, pause, timeline scrubbing, and frame-by-fra
 
 ## Development
 
+### Prerequisites
+
+- Node.js `>= 20.10.0`
+- npm `>= 10.0.0`
+
 1. Install dependencies:
    - `npm install`
 2. Build:
@@ -41,9 +46,12 @@ The manifest includes `file:///*` host permission. Firefox may still require loc
 
 ## Packaging
 
-- Build first: `npm run build`
-- Package zip: `npm run package`
-- Output: `web-ext-artifacts/gif-scrubber-0.1.0.zip`
+1. Build first:
+   - `npm run build`
+2. Package (uses Node script `scripts/package.mjs`):
+   - `npm run package`
+3. Upload artifact:
+   - `web-ext-artifacts/gif-scrubber-0.1.0.zip`
 
 ## AMO Submission Checklist
 
